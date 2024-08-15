@@ -1,37 +1,66 @@
-# Areal_prediction_framework
-Automated download of raster data and acquisition dates from wms servers or geoportals then using UNet model for prediction target.
+# Areal Prediction Framework
 
-# Description
-In this repository I used two submodule
-[Data_acquisition](https://github.com/LUP-LuftbildUmweltPlanung/Data_acquisition): This repository contains several python scripts to download the image data as well as the acquisition dates from a specified wms server or geoportal, given one or multiple shape files. And  [UNet](https://arxiv.org/abs/1505.04597) this repository contains the code necessary to run a UNet based on the Dynamic Unet implementation of fastai. The implementation uses the PyTorch DeepLearning framework. UNet is used for image segmentation (pixel-wise classification). 
+An automated framework for downloading raster data and acquisition dates from WMS servers or geoportals, followed by prediction using a UNet model.
+
+## Description
+
+This repository integrates two submodules:
+
+1. **[Data Acquisition](https://github.com/LUP-LuftbildUmweltPlanung/Data_acquisition):** This module contains Python scripts to download image data and their corresponding acquisition dates from specified WMS servers or geoportals using one or more shapefiles.
+
+2. **[UNet](https://arxiv.org/abs/1505.04597):** This module provides the code necessary to run a UNet model, based on the Dynamic UNet implementation from fastai, utilizing the PyTorch Deep Learning framework. The UNet model is used for image segmentation (pixel-wise classification).
 
 ## Getting Started
 
 ### Dependencies
-* GDAL, Pytorch-fast.ai, Scipy ... (see installation)
-* Cuda-capable GPU ([overview here](https://developer.nvidia.com/cuda-gpus))
-* Anaconda ([download here](https://www.anaconda.com/products/distribution))
-* developed on Windows 10
 
-# Installation
-* clone the Stable UNet repository
-* conda create --name UNet python==3.9.6
-* conda activate UNet
-* cd ../UNet/environment
-* pip install -r requirements.txt
+- GDAL
+- PyTorch-Fastai
+- SciPy
+- CUDA-capable GPU ([CUDA GPUs Overview](https://developer.nvidia.com/cuda-gpus))
+- Anaconda ([Download Anaconda](https://www.anaconda.com/products/distribution))
 
-## Executing program
-set parameters and run in Areal_predict_framework.py
+**Note:** This project was developed on Windows 10.
+
+### Installation
+
+1. Clone the stable UNet repository.
+2. Create a new environment:
+    ```bash
+    conda create --name UNet python=3.9.6
+    ```
+3. Activate the environment:
+    ```bash
+    conda activate UNet
+    ```
+4. Navigate to the environment folder:
+    ```bash
+    cd ../UNet/environment
+    ```
+5. Install the required packages:
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+## Executing the Program
+
+Set the desired parameters in `Areal_predict_framework.py` and run the script.
 
 ## Authors
-* [Benjamin Stöckigt](https://github.com/benjaminstoeckigt)
-* [Shadi Ghantous](https://github.com/Shadiouss)
+
+- [Benjamin Stöckigt](https://github.com/benjaminstoeckigt)
+- [Shadi Ghantous](https://github.com/Shadiouss)
 
 ## Acknowledgments
-Inspiration, code snippets, etc.
 
-* [fastai](https://www.fast.ai/)
-* [fastai documentation](https://docs.fast.ai/)
-* [UNet tutorial by Deep Learning Berlin](https://deeplearning.berlin/satellite%20imagery/computer%20vision/fastai/2021/02/17/Building-Detection-SpaceNet7.html)
-* [UNet adjustable input-channels tutorial by Navid Panchi](https://github.com/navidpanchi/N-Channeled-Input-UNet-Fastai/blob/master/N-Channeled-Input-UNet%20.ipynb)
-* [UNet paper](https://arxiv.org/abs/1505.04597)
+This project was inspired by and built upon the work of many contributors. Special thanks to:
+
+- [fastai](https://www.fast.ai/)
+- [fastai Documentation](https://docs.fast.ai/)
+- [UNet Tutorial by Deep Learning Berlin](https://deeplearning.berlin/satellite%20imagery/computer%20vision/fastai/2021/02/17/Building-Detection-SpaceNet7.html)
+- [Adjustable Input-Channels UNet Tutorial by Navid Panchi](https://github.com/navidpanchi/N-Channeled-Input-UNet-Fastai/blob/master/N-Channeled-Input-UNet%20.ipynb)
+- [UNet Paper](https://arxiv.org/abs/1505.04597)
+
+---
+
+This revision provides a more structured, concise, and readable format for your README, which should help users quickly understand and navigate your project.
