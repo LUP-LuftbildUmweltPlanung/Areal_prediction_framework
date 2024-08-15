@@ -44,7 +44,7 @@ This repository integrates two submodules:
 
 ## Executing the Program
 
-Set the desired parameters in `Areal_predict_framework.py` and run the script.
+Set the desired parameters in `Areal_predict.py` and run the script.
 
 ## Authors
 
