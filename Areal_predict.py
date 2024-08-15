@@ -17,7 +17,7 @@ from create_tiles_unet import load_json_params
 # Define the input parameters directly, including predict_model
 input_data = {
     'log_file': 'BB_log.txt',
-    'directory_path': 'test_script\\',
+    'directory_path': r'Data_acquisition\test_script\\',
     'predict_model': r'H:\+DeepLearning_Extern\beschirmung\RGB_UNET_Modell\Daten\model_path\Beschirmung_comb_Aug_data_less_propa_transform\Beschirmung_comb_Aug_data_less_propa_transform.pkl',
     'r_aufl': None,  # We will set this later after loading the JSON
     'wms_ad': 'https://isk.geobasis-bb.de/mapproxy/dop20_2019_2021/service/wms?request=GetCapabilities&service=WMS',
