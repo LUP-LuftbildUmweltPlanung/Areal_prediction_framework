@@ -11,8 +11,8 @@ This repository integrates two submodules:
 2. **[UNet](https://arxiv.org/abs/1505.04597):** This module provides the code necessary to run a UNet model, based on the Dynamic UNet implementation from fastai, utilizing the PyTorch Deep Learning framework. The UNet model is used for image segmentation (pixel-wise classification).
 
    
-* Finally the output will be three different folder: **"WMS_tiles", "Meta_files", "Predicted tiles"** or
-Three different files **"WMS_merged.tif", "Meta_merged.tif", "Predicted_merged.tif"**.
+* Finally the output will be three different folders: **"WMS_tiles", "Meta_files", "Predicted tiles"**.
+Or if merged defined as True, the output beside the folder three different files too:  **"WMS_merged.tif", "Meta_merged.tif", "Predicted_merged.tif"**.
 
 ## Getting Started
 
