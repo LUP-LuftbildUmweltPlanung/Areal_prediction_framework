@@ -9,6 +9,8 @@ This repository integrates two submodules:
 1. **[Data Acquisition](https://github.com/LUP-LuftbildUmweltPlanung/Data_acquisition):** This module contains Python scripts to download image data and their corresponding acquisition dates from specified WMS servers or geoportals using one or more shapefiles.
 
 2. **[UNet](https://arxiv.org/abs/1505.04597):** This module provides the code necessary to run a UNet model, based on the Dynamic UNet implementation from fastai, utilizing the PyTorch Deep Learning framework. The UNet model is used for image segmentation (pixel-wise classification).
+Finally the output will be three different folder: "WMS_tiles", "Meta_files", "Predicted tiles" or
+Three different files "WMS_merged.tif", "Meta_merged.tif", "Predicted_merged.tif"
 
 ## Getting Started
 
