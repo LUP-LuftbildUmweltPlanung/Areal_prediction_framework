@@ -1,4 +1,13 @@
 import os
+import sys
+import time
+import logging
+
+# Add the paths to the system path so Python can find the modules
+sys.path.append(os.path.abspath('Data_acquisition'))
+sys.path.append(os.path.abspath('UNet'))
+
+import os
 import wms_saveraster as wms_saveraster
 import download_by_shape_functions as func
 import time
