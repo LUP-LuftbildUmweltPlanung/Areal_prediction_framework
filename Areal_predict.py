@@ -7,10 +7,8 @@ import logging
 sys.path.append(os.path.abspath('Data_acquisition'))
 sys.path.append(os.path.abspath('UNet'))
 
-import os
 import wms_saveraster as wms_saveraster
 import download_by_shape_functions as func
-import time
 from predict import save_predictions
 from create_tiles_unet import load_json_params
 
