@@ -29,24 +29,21 @@ Or if merged defined as True, the output beside the folder three different files
 **Note:** This project was developed on Windows 10.
 
 ### Installation
-
-
-
-    ```bash
-    conda create --name Areal_predict python=3.9.6
-    ```
-    
-    ```bash
-    conda activate Areal_predict
-    ```
-
-    ```bash
-    cd ../Areal_prediction_framework/environment
-    ```
-
-    ```bash
-    pip install -r requirements.txt
-    ```
+```ruby
+conda create --name Areal_predict python=3.9.6
+```
+```ruby
+conda activate Areal_predict
+```
+```ruby
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+```
+```ruby
+cd ../Areal_prediction_framework/environment
+```
+```ruby
+pip install -r requirements.txt
+```
 
 ## Executing the Program
 
