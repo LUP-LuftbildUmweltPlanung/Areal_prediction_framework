@@ -36,9 +36,6 @@ conda create --name Areal_predict python=3.9.6
 conda activate Areal_predict
 ```
 ```ruby
-pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-```
-```ruby
 cd ../Areal_prediction_framework/environment
 ```
 ```ruby
