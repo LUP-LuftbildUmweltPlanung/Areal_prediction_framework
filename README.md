@@ -13,6 +13,8 @@ This repository integrates two submodules:
    
 * Finally the output will be three different folders: **"WMS_tiles", "Meta_files", "Predicted tiles"**.
 Or if merged defined as True, the output beside the folder three different files too:  **"WMS_merged.tif", "Meta_merged.tif", "Predicted_merged.tif"**.
+![Unbenannt](https://github.com/user-attachments/assets/bbb1a98e-c121-4a00-b561-e871cd316373)
+
 
 ## Getting Started
 
