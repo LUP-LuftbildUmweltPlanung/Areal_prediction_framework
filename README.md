@@ -30,20 +30,20 @@ Or if merged defined as True, the output beside the folder three different files
 
 ### Installation
 
-1. Clone the stable UNet repository.
-2. Create a new environment:
+
+
     ```bash
     conda create --name Areal_predict python=3.9.6
     ```
-3. Activate the environment:
+    
     ```bash
     conda activate Areal_predict
     ```
-4. Navigate to the environment folder:
+
     ```bash
     cd ../Areal_prediction_framework/environment
     ```
-5. Install the required packages:
+
     ```bash
     pip install -r requirements.txt
     ```
