@@ -34,7 +34,6 @@ def store_tif(output_folder, output_array, dtype, geo_transform, geo_proj, nodat
     else:
         processed_array = output_array
 
-
     if len(processed_array.shape) == 3:
         for b in range(processed_array.shape[0]):
             out_ds.GetRasterBand(b + 1).WriteArray(processed_array[b])
@@ -82,8 +81,6 @@ def merge_tiles_using_vrt(input_folder, output_file):
 def process_and_merge_predictions(output_folder, merge=False):
     # Convert output_folder to a Path object if it isn't already
     output_folder = Path(output_folder)
-
-    # Assuming you already have code that predicts and saves individual tiles in `output_folder`
 
     # After predictions are saved, check if merging is required
     if merge:
@@ -141,7 +138,6 @@ def plot_valid_predict(output_folder, predict_path, regression=False, merge=Fals
 
             if class_zero:
                 true_class = true_class[true_class != 0] - 1
-
 
             y_true.append(true_class)
             y_pred.append(pred_class)
@@ -231,7 +227,6 @@ def save_predictions(predict_model, predict_path, regression, merge=False, all_c
     print(f'Started at: {current_time}')
     # for i in range(len(tiles)):
     for i in tqdm(range(len(tiles)), desc='Processing tiles'):
-        # print(f'Current progress: {i}/{len(tiles)}')
         tile_preds = learn.predict(Path(tiles[i]), with_input=False)
         class_lst = []
 
