@@ -26,13 +26,7 @@ def write_meta_raster(x_min, y_min, x_max, y_max, bildflug_array, out_meta, epsg
 
     # nrows, ncols = bildflug_array.shape
     nrows, ncols = img_width, img_height
-    # print(f"nrows, ncols {nrows},{ncols }")
-
-    # Set the geotransform
-    # (top left x, w-e pixel resolution, rotation, top left y, rotation, n-s pixel resolution)
-    # The following example places the top left corner at 0 longitude, 0 latitude,
-    # with a pixel size of 1 degree. Modify according to your data's reference system and resolution.
-    # geotransform = (x_min, (x_max-x_min)/ncols, 0, y_min, 0, (y_max-y_min)/nrows)
+    
     # Set the geotransform
     geotransform = (x_min, r_aufl, 0, y_max, 0, -r_aufl)  # new
 
@@ -229,8 +223,6 @@ def png_to_tiff(img, output_file_path, x_min, y_min, x_max, y_max):
         pixel_height = (y_max - y_min) / tif_ds.RasterYSize
 
         # Set geotransformation
-        # [top left x, pixel width, 0, top left y, 0, pixel height (negative because origin is top left corner)]
-        # geo_transform = [extent[0], pixel_width, 0, extent[3], 0, -pixel_height]
         geo_transform = [x_min, pixel_width, 0, y_max, 0, -pixel_height]
         try:
             tif_ds.SetGeoTransform(geo_transform)
@@ -241,93 +233,7 @@ def png_to_tiff(img, output_file_path, x_min, y_min, x_max, y_max):
         tif_ds = None
     else:
         print("Failed to open the TIFF file %s." % output_file_path)
-#
-# def merge_files(input_dir, output_file_name, output_wms_path, batch_size=1000, file_type=None):
-#     """
-#     Merge all TIFF files in the specified directory into a single output file in batches.
-#
-#     Args:
-#         input_dir (str): Path to the directory containing the TIFF files.
-#         output_file_name (str): The common part of the name of the TIFF files to merge (e.g., 'Proesa' for 'Proesa_1.tif').
-#         output_wms_path (str): Path to save the merged output file.
-#         batch_size (int): Number of files to process in each batch.
-#         file_type (str, optional): File type specification, defaults to None. If 'meta', the output file name will be adjusted.
-#     """
-#     print('Merging TIFF files in batches...')
-#
-#     # Pattern for file matching based on output_file_name
-#     pattern1 = f"{output_file_name}.tif"
-#     pattern2 = f"{output_file_name}_*.tif"
-#
-#     input_files = glob.glob(os.path.join(input_dir, pattern1)) + glob.glob(os.path.join(input_dir, pattern2))
-#
-#     # Filter out .ovr files
-#     input_files = [f for f in input_files if not f.endswith('.ovr')]
-#
-#     if not input_files:
-#         raise FileNotFoundError("No matching TIFF files found in the specified directory.")
-#
-#     total_files = len(input_files)
-#     print(f'Total number of files to merge: {total_files}')
-#
-#     if file_type == "meta":
-#         output_file_name = output_file_name.split(".")[0] + "_meta"
-#
-#     temp_files = []
-#     compress_options = [
-#         "-co", "COMPRESS=DEFLATE",
-#         "-co", "TILED=YES",
-#         "-co", "BIGTIFF=YES",
-#         "-a_nodata", "0"
-#     ]
-#
-#     for i in range(0, total_files, batch_size):
-#         batch_files = input_files[i:i + batch_size]
-#         batch_output_file = os.path.join(input_dir, f"batch_{i // batch_size}.tif")
-#
-#         # Skip processing if the batch file already exists
-#         if os.path.exists(batch_output_file):
-#             print(f"Batch file {batch_output_file} already exists, skipping...")
-#             temp_files.append(batch_output_file)
-#             continue
-#
-#         # Create a VRT file from batch TIFF files
-#         vrt_file = os.path.join(input_dir, f"batch_{i // batch_size}.vrt")
-#         gdal.BuildVRT(vrt_file, batch_files)
-#
-#         # Compress the VRT file to the final batch output file
-#         gdal.Translate(batch_output_file, vrt_file, options=gdal.TranslateOptions(options=compress_options))
-#
-#         # Check if batch output was created successfully
-#         if not os.path.exists(batch_output_file):
-#             raise RuntimeError(f"Failed to create batch file {batch_output_file}")
-#
-#         # Clean up the temporary VRT file
-#         os.remove(vrt_file)
-#         temp_files.append(batch_output_file)
-#         print(f"Processed batch {i // batch_size + 1}/{(total_files + batch_size - 1) // batch_size}")
-#
-#     # Ensure we have batch files before proceeding to merge
-#     if not temp_files:
-#         raise RuntimeError("No batch files were created. Cannot proceed with the merge.")
-#
-#     # Merge all batch files into the final output file
-#     vrt_file = os.path.join(input_dir, "final_merged.vrt")
-#     gdal.BuildVRT(vrt_file, temp_files)
-#
-#     if not os.path.exists(vrt_file):
-#         raise RuntimeError(f"Failed to create the VRT file: {vrt_file}")
-#
-#     # Translate the VRT file to the final output file
-#     final_output_file = os.path.join(output_wms_path, f"{output_file_name}_merged.tif")
-#     gdal.Translate(final_output_file, vrt_file, options=gdal.TranslateOptions(options=compress_options))
-#
-#     # Clean up the temporary batch files and VRT file
-#     for temp_file in temp_files:
-#         os.remove(temp_file)
-#     os.remove(vrt_file)
-#
-#     print(f"Merged and compressed TIFF file created at {final_output_file}")
+
 
 def get_tile_bounds(file_path):
     """Extract bounding box from a single TIFF file."""
@@ -620,7 +526,6 @@ def polygon_processing(geom, output_wms_path, output_file_name, epsg_code, epsg_
 
     else:
         # Processing without partitioning
-
         sub_log.debug("Processing %s without partitioning" % output_file_name)
         output_file_name_n = output_file_name + ".tif"
 
@@ -770,7 +675,6 @@ def main(input):
     else:
         print(f"'dop' and/or 'meta' folders are missing or empty. Proceeding with WMS tile download and processing...")
 
-        # Continue with your tile download process here, including creating folders if needed
         # Create dop and meta directories if they do not exist
         if not os.path.exists(dop_folder_path):
             os.makedirs(dop_folder_path)
