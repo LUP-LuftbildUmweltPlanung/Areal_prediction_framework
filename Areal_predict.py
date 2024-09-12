@@ -65,7 +65,7 @@ try:
     save_predictions(
         predict_model=input_data['predict_model'],
         predict_path=predict_path,
-        regression=False,  # Assuming default values for these parameters
+        regression=False,  
         merge=input_data['merge'],
         all_classes=False,
         specific_class=None,
