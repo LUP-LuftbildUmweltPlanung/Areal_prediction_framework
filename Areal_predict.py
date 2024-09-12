@@ -7,28 +7,30 @@ import logging
 sys.path.append(os.path.abspath('Data_acquisition'))
 sys.path.append(os.path.abspath('UNet'))
 
+import os
 import wms_saveraster as wms_saveraster
 import download_by_shape_functions as func
+import time
 from predict import save_predictions
 from create_tiles_unet import load_json_params
 
 # Define the input parameters directly, including predict_model
 input_data = {
     'log_file': 'BB_log.txt',
-    'directory_path': r'Data_acquisition\test_script\\',
+    'directory_path': r'W:\2023_RailVitaliTree\Prozessierung\SubPixel_RLP\small_dataset',
     'predict_model': r'H:\+DeepLearning_Extern\beschirmung\RGB_UNET_Modell\Daten\model_path\Beschirmung_comb_Aug_data_less_propa_transform\Beschirmung_comb_Aug_data_less_propa_transform.pkl',
     'r_aufl': None,  # We will set this later after loading the JSON
-    'wms_ad': 'https://isk.geobasis-bb.de/mapproxy/dop20_2019_2021/service/wms?request=GetCapabilities&service=WMS',
-    'layer': 'dop20_bebb_2019_2021_farbe',
-    'layer2': 'None',
-    'wms_ad_meta': 'https://isk.geobasis-bb.de/ows/aktualitaeten_wms?',
-    'layer_meta': 'bb_dop-19-21_info',
     'meta_calc': True,
     'wms_calc': True,
-    'state': 'BB_history',
+    'wms_ad': 'https://sg.geodatenzentrum.de/wms_dop__14152289-bb6b-bcbb-93d7-74602cfa13d6?request=GetCapabilities&service=WMS&',
+    'layer': 'rgb',
+    'layer2': 'None',
+    'wms_ad_meta': 'http://sg.geodatenzentrum.de/wms_info?',
+    'layer_meta': 'dop',
+    'state': False,
     'img_width': None,  # We will set this later after loading the JSON
     'img_height': None, # We will set this later after loading the JSON
-    'merge_wms': True,
+    'batch_size':1000,
     'AOI': 'Potsdam',
     'year': '2018',
     'merge': True,
