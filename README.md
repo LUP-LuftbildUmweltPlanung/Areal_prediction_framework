@@ -29,19 +29,48 @@ Or if merged defined as True, the output beside the folder three different files
 **Note:** This project was developed on Windows 10.
 
 ### Installation
-```ruby
-conda create --name Areal_predict python=3.9.6
-```
-```ruby
-conda activate Areal_predict
-```
-```ruby
+#### Installation for (UNet)
+```bash
+conda create --name Areal_predict_unet python=3.9.6
+
+conda activate Areal_predict_unet
+
 cd ../Areal_prediction_framework/environment
-```
-```ruby
+
 pip install -r requirements.txt
 ```
+#### Installation for (sam2)
+```bash
+# 1. Create and activate the Conda environment
+conda create -n Areal_predict_sam2_1 python=3.11
+conda activate Areal_predict_sam2_1
 
+# 2. Install PyTorch and its dependencies
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+
+# 3. Go to the main folder where the script is located
+cd ../Areal_prediction_framework
+
+# 4. Clone the SAM2 repository and rename the folder to avoid conflicts
+git clone https://github.com/facebookresearch/sam2.git
+mv sam2 sam2_conf
+
+# 5. Change into the 'sam2_conf' directory and copy the 'sam2' folder to the 'sam2_1_fine_tune-main' folder
+cd sam2_conf
+cp -r sam2 ../sam2/
+
+# 6. Install the SAM2 package in editable mode
+pip install -e .
+
+# 7. Navigate to the 'checkpoints' folder and download model checkpoints
+cd checkpoints && download_ckpts.sh
+cd ../..
+cd checkpoints_sam2 && download_ckpts.sh
+
+# 8. Go two directories up and install additional dependencies
+cd environment
+pip install -r requirements_sam2.txt
+```
 ## Executing the Program
 
 Set the desired parameters in `Areal_predict.py` and run the script.
