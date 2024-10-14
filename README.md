@@ -30,7 +30,7 @@ Or if merged defined as True, the output beside the folder three different files
 
 ### Installation
 To use the UNet model for prediction processing, follow these installation steps:
-#### Installation for (UNet)
+#### Installation for UNet
 ```bash
 conda create --name Areal_predict_unet python=3.9.6
 
