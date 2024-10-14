@@ -4,12 +4,13 @@ An automated framework for downloading raster data and acquisition dates from WM
 
 ## Description
 
-This repository integrates two submodules:
+This repository integrates these submodules:
 
 1. **[Data Acquisition](https://github.com/LUP-LuftbildUmweltPlanung/Data_acquisition):** This module contains Python scripts to download image data and their corresponding acquisition dates from specified WMS servers or geoportals using one or more shapefiles.
 
 2. **[UNet](https://arxiv.org/abs/1505.04597):** This module provides the code necessary to run a UNet model, based on the Dynamic UNet implementation from fastai, utilizing the PyTorch Deep Learning framework. The UNet model is used for image segmentation (pixel-wise classification).
 
+3. **[SAM2_1_fine_tune](https://github.com/LUP-LuftbildUmweltPlanung/SAM2_1_fine_tune/tree/main):** This module contains the code required to fine-tune the pre-trained SAM 2 model on a custom dataset, enhancing its performance for defining a tree or canopy model.
    
 * Finally the output will be three different folders: **"WMS_tiles", "Meta_files", "Predicted tiles"**.
 Or if merged defined as True, the output beside the folder three different files too:  **"WMS_merged.tif", "Meta_merged.tif", "Predicted_merged.tif"**.
