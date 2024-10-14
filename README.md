@@ -29,6 +29,7 @@ Or if merged defined as True, the output beside the folder three different files
 **Note:** This project was developed on Windows 10.
 
 ### Installation
+To use the UNet model for prediction processing, follow these installation steps:
 #### Installation for (UNet)
 ```bash
 conda create --name Areal_predict_unet python=3.9.6
@@ -39,7 +40,9 @@ cd ../Areal_prediction_framework/environment
 
 pip install -r requirements.txt
 ```
-#### Installation for (sam2)
+If you want to use SAM2 for predicting tiles, follow these steps for installation:
+
+#### Installation for SAM2
 ```bash
 # 1. Create and activate the Conda environment
 conda create -n Areal_predict_sam2_1 python=3.11
