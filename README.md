@@ -10,15 +10,15 @@ This repository integrates these submodules:
 
 2. **[UNet](https://arxiv.org/abs/1505.04597):** This module provides the code necessary to run a UNet model, based on the Dynamic UNet implementation from fastai, utilizing the PyTorch Deep Learning framework. The UNet model is used for image segmentation (pixel-wise classification).
 
-3. **[SAM2_1_fine_tune](https://github.com/LUP-LuftbildUmweltPlanung/SAM2_1_fine_tune/tree/main):** This module contains the code required to fine-tune the pre-trained SAM 2 model on a custom dataset, enhancing its performance for defining a tree or canopy model.
+3. **[SAM2_1_fine_tune](https://github.com/LUP-LuftbildUmweltPlanung/SAM2_1_fine_tune/tree/main):** This module contains the code required to fine-tune the pre-trained SAM 2 model on a custom dataset, enhancing its performance for defining a tree or canopy model. Like the UNet, it is also used for image segmentation.
 
-4. **[RetinaNet](https://arxiv.org/abs/1708.02002):** This module is based on the [DeepForest](https://github.com/weecology/DeepForest) framework to detect objects within an image. The model is particularly suited for high-resolution aerial imagery, such as images with a resolution of approximately 20 cm. Users can apply RetinaNet either to the entire image or to smaller tiles created by splitting the image. Images can be downloaded using the `wms_servers.py` script, and the resulting tiles can be merged to create a single, large image for more cohesive object detection.
+4. **[RetinaNet](https://arxiv.org/abs/1708.02002):** This module is based on the [DeepForest](https://github.com/weecology/DeepForest) framework to detect objects within an image. Unlike UNet and SAM2, which perform image segmentation, RetinaNet is specifically used for object detection. The model is particularly suited for high-resolution aerial imagery, such as images with a resolution of approximately 20 cm. Users can apply RetinaNet either to the entire image or to smaller tiles created by splitting the image. Images can be downloaded using the `wms_servers.py` script, and the resulting tiles can be merged to create a single, large image for more cohesive object detection.
 
 ### Output Structure
 The final output of the framework is organized into:
 - **Folders:**
-  - `WMS_tiles`
-  - `Meta_files`
+  - `WMS_tiles` 
+  - `Meta_files` 
   - `Predicted tiles`
 - **Files (if merging is enabled):**
   - `WMS_merged.tif`
