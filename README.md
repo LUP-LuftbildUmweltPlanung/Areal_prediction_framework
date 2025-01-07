@@ -112,4 +112,5 @@ This project was inspired by and built upon the work of many contributors. Speci
 - [UNet Tutorial by Deep Learning Berlin](https://deeplearning.berlin/satellite%20imagery/computer%20vision/fastai/2021/02/17/Building-Detection-SpaceNet7.html)
 - [Adjustable Input-Channels UNet Tutorial by Navid Panchi](https://github.com/navidpanchi/N-Channeled-Input-UNet-Fastai/blob/master/N-Channeled-Input-UNet%20.ipynb)
 - [UNet Paper](https://arxiv.org/abs/1505.04597)
+- [Deepforest](https://deepforest.readthedocs.io/en/latest/)
 
