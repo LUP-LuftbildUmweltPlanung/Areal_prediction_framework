@@ -11,9 +11,11 @@ sys.path.append(os.path.abspath('UNet'))
 import wms_saveraster as wms_saveraster
 import download_by_shape_functions as func
 from create_tiles_unet import load_json_params
+from predict_deepforest import process_all_tif_files_in_folder
+from deepforest import main
 
 # Define the method
-model_usage = "sam2"  # "UNet" or "sam2"
+model_usage = "deepforest"  # "UNet" or "sam2"
 
 # Dynamically import based on model usage
 if model_usage == "UNet":
@@ -79,6 +81,63 @@ elif model_usage == "sam2":
         'merge': True,
     }
 
+elif model_usage == "deepforest":
+    # Define input data for DeepForest
+    input_data = {
+        'log_file': 'BB_log.txt',
+        'directory_path': r'Shapefile',
+        'predict_model': r'N:\MnD\models\RetinaNet\checkpoints\best_model-epoch11-val_classification0.1530.ckpt',
+        'r_aufl': 0.2,
+        'meta_calc': True,
+        'wms_calc': True,
+        'wms_ad': 'https://sg.geodatenzentrum.de/wms_dop__14152289-bb6b-bcbb-93d7-74602cfa13d6?request=GetCapabilities&service=WMS&',
+        'layer': 'rgb',
+        'layer2': 'None',
+        'wms_ad_meta': 'http://sg.geodatenzentrum.de/wms_info?',
+        'layer_meta': 'dop',
+        'state': False,
+        'img_width': 400,
+        'img_height': 400,
+        'batch_size': 1000,
+        'AOI': 'Leipzig',
+        'year': '2024',
+        'merge': True,
+        "folder_path": r"Shapefile",
+        "savedir": r"Shapefile\Predictions",
+        "small_tiles": False,
+        "patch_size": 400,
+        "patch_overlap": 0.25,
+        "iou_threshold": 0.5,
+        "thresh": 0.1
+    }
+
+
+    def run_predict(args_predict):
+        """
+        Main function to execute the prediction pipeline for all TIFF files in a folder.
+        """
+        # Correctly load the DeepForest model from the checkpoint
+        model_path = input_data["predict_model"]
+
+        # Use the classmethod to load the model
+        model = main.deepforest.load_from_checkpoint(model_path)  # Load the model correctly
+
+        # Run prediction on all TIFF files in the folder
+        process_all_tif_files_in_folder(
+            model=model,
+            folder_path=input_data["folder_path"],
+            savedir=input_data["savedir"],
+            small_tiles=input_data["small_tiles"],
+            patch_size=input_data["patch_size"],
+            patch_overlap=input_data["patch_overlap"],
+            iou_threshold=input_data["iou_threshold"],
+            thresh=input_data["thresh"]
+        )
+
+
+    # Execute the DeepForest prediction pipeline
+    run_predict(input_data)
+
 # Set up logging
 log_file = "iterate_wms_log.txt"
 main_log = func.config_logger("debug", log_file)
@@ -111,7 +170,7 @@ try:
             validation_vision=False,
             class_zero=True
         )
-    else:
+    elif model_usage == "sam2":
         predict_and_save_tiles(
             input_folder=predict_path,
             model_path=input_data['predict_model'],
@@ -119,6 +178,10 @@ try:
             AOI=input_data['AOI'],
             year=input_data['year']
         )
+    elif model_usage == "deepforest":
+        print("start predict")
+        run_predict(input_data)
+        
 
 except KeyError as ke:
     main_log.error(f"KeyError: {str(ke)}")
