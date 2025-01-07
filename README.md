@@ -1,6 +1,6 @@
 # Areal Prediction Framework
 
-An automated framework for downloading raster data and acquisition dates from WMS servers or geoportals, followed by prediction the mask over the WMS tiles using a UNet model.
+An automated framework for downloading raster data and acquisition dates from WMS servers or geoportals, followed by predicting masks over the WMS tiles using various models, including UNet and RetinaNet.
 
 ## Description
 
@@ -11,11 +11,21 @@ This repository integrates these submodules:
 2. **[UNet](https://arxiv.org/abs/1505.04597):** This module provides the code necessary to run a UNet model, based on the Dynamic UNet implementation from fastai, utilizing the PyTorch Deep Learning framework. The UNet model is used for image segmentation (pixel-wise classification).
 
 3. **[SAM2_1_fine_tune](https://github.com/LUP-LuftbildUmweltPlanung/SAM2_1_fine_tune/tree/main):** This module contains the code required to fine-tune the pre-trained SAM 2 model on a custom dataset, enhancing its performance for defining a tree or canopy model.
-   
-* Finally the output will be three different folders: **"WMS_tiles", "Meta_files", "Predicted tiles"**.
-Or if merged defined as True, the output beside the folder three different files too:  **"WMS_merged.tif", "Meta_merged.tif", "Predicted_merged.tif"**.
-![Unbenannt](https://github.com/user-attachments/assets/bbb1a98e-c121-4a00-b561-e871cd316373)
 
+4. **[RetinaNet](https://arxiv.org/abs/1708.02002):** This module is based on the [DeepForest](https://github.com/weecology/DeepForest) framework to detect objects within an image. The model is particularly suited for high-resolution aerial imagery, such as images with a resolution of approximately 20 cm. Users can apply RetinaNet either to the entire image or to smaller tiles created by splitting the image. Images can be downloaded using the `wms_servers.py` script, and the resulting tiles can be merged to create a single, large image for more cohesive object detection.
+
+### Output Structure
+The final output of the framework is organized into:
+- **Folders:**
+  - `WMS_tiles`
+  - `Meta_files`
+  - `Predicted tiles`
+- **Files (if merging is enabled):**
+  - `WMS_merged.tif`
+  - `Meta_merged.tif`
+  - `Predicted_merged.tif`
+
+![Output Example](https://github.com/user-attachments/assets/bbb1a98e-c121-4a00-b561-e871cd316373)
 
 ## Getting Started
 
@@ -30,20 +40,18 @@ Or if merged defined as True, the output beside the folder three different files
 **Note:** This project was developed on Windows 10.
 
 ### Installation
-To use the UNet model for prediction processing, follow these installation steps:
+
 #### Installation for UNet
+To use the UNet model for prediction processing, follow these installation steps:
 ```bash
 conda create --name Areal_predict_unet python=3.9.6
-
 conda activate Areal_predict_unet
-
 cd ../Areal_prediction_framework/environment
-
 pip install -r requirements.txt
 ```
-If you want to use SAM2 for predicting tiles, follow these steps for installation:
 
 #### Installation for SAM2
+If you want to use SAM2 for predicting tiles, follow these steps for installation:
 ```bash
 # 1. Create and activate the Conda environment
 conda create -n Areal_predict_sam2_1 python=3.11
@@ -75,17 +83,20 @@ cd checkpoints_sam2 && download_ckpts.sh
 cd environment
 pip install -r requirements_sam2.txt
 ```
-#### Installation for deepforest
+
+#### Installation for RetinaNet
+To use the RetinaNet model for object detection, follow these steps:
 ```bash
-* `conda create -n Areal_predict_RetinaNet python=3.11`
-* `conda activate Areal_predict_RetinaNet`
-* `pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118`
-* `cd ../RetinaNet/environment`
-* `pip install -r requirements.txt`
+conda create -n Areal_predict_RetinaNet python=3.11
+conda activate Areal_predict_RetinaNet
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+cd ../RetinaNet/environment
+pip install -r requirements.txt
 ```
+
 ## Executing the Program
 
-Set the desired parameters in `Areal_predict.py` and run the script.
+Set the desired parameters in `Areal_predict.py` and run the script to process the data and generate predictions.
 
 ## Authors
 
@@ -102,6 +113,3 @@ This project was inspired by and built upon the work of many contributors. Speci
 - [Adjustable Input-Channels UNet Tutorial by Navid Panchi](https://github.com/navidpanchi/N-Channeled-Input-UNet-Fastai/blob/master/N-Channeled-Input-UNet%20.ipynb)
 - [UNet Paper](https://arxiv.org/abs/1505.04597)
 
----
-
-This revision provides a more structured, concise, and readable format for your README, which should help users quickly understand and navigate your project.
