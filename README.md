@@ -75,6 +75,14 @@ cd checkpoints_sam2 && download_ckpts.sh
 cd environment
 pip install -r requirements_sam2.txt
 ```
+#### Installation for deepforest
+```bash
+* `conda create -n Areal_predict_RetinaNet python=3.11`
+* `conda activate Areal_predict_RetinaNet`
+* `pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118`
+* `cd ../RetinaNet/environment`
+* `pip install -r requirements.txt`
+```
 ## Executing the Program
 
 Set the desired parameters in `Areal_predict.py` and run the script.
