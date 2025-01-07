@@ -261,29 +261,27 @@ def merge_files(input_dir, output_file_name, output_wms_path, batch_size, file_t
         output_file_name (str): The common part of the name of the TIFF files to merge (e.g., 'Proesa' for 'Proesa_1.tif').
         output_wms_path (str): Path to save the merged output file.
         batch_size (int): Number of files to process in each batch.
-        file_type (str, optional): File type specification, defaults to None. If 'meta', the output file name will be adjusted.
+        file_type (str, optional): File type specification, defaults to None.
+                                   If 'meta', the output file name will be adjusted.
     """
-    print('Merging TIFF files in batches...')
+    print('Starting merge process...')
 
-    # Pattern for file matching based on output_file_name
-    pattern1 = f"{output_file_name}.tif"
-    pattern2 = f"{output_file_name}_*.tif"
+    # Define file-matching patterns
+    if file_type == "meta":
+        input_files = glob.glob(os.path.join(input_dir, "*_meta.tif"))
+    else:
+        input_files = glob.glob(os.path.join(input_dir, "*.tif"))
 
-    input_files = glob.glob(os.path.join(input_dir, pattern1)) + glob.glob(os.path.join(input_dir, pattern2))
-
-    # Filter out .ovr files
+    # Exclude .ovr files
     input_files = [f for f in input_files if not f.endswith('.ovr')]
 
+    # Check if matching files are found
     if not input_files:
-        raise FileNotFoundError("No matching TIFF files found in the specified directory.")
+        raise FileNotFoundError(f"No matching TIFF files found in {input_dir} for {file_type}.")
 
-    total_files = len(input_files)
-    print(f'Total number of files to merge: {total_files}')
+    print(f"Found {len(input_files)} files to merge for file type: {file_type}")
 
-    if file_type == "meta":
-        output_file_name = output_file_name.split(".")[0] + "_meta"
-
-    # Sort the files based on spatial proximity
+    # Sort files by spatial proximity for better merging
     input_files = sort_files_by_spatial_proximity(input_files)
 
     temp_files = []
@@ -294,51 +292,71 @@ def merge_files(input_dir, output_file_name, output_wms_path, batch_size, file_t
         "-a_nodata", "0"
     ]
 
-    for i in range(0, total_files, batch_size):
+    # Process files in batches
+    for i in range(0, len(input_files), batch_size):
         batch_files = input_files[i:i + batch_size]
         batch_output_file = os.path.join(input_dir, f"batch_{i // batch_size}.tif")
 
-        # Skip processing if the batch file already exists
+        # Skip if the batch file already exists
         if os.path.exists(batch_output_file):
-            print(f"Batch file {batch_output_file} already exists, skipping...")
+            print(f"Batch file {batch_output_file} already exists. Skipping...")
             temp_files.append(batch_output_file)
             continue
 
-        # Create a VRT file from batch TIFF files
+        # Create VRT file for the batch
         vrt_file = os.path.join(input_dir, f"batch_{i // batch_size}.vrt")
-        gdal.BuildVRT(vrt_file, batch_files)
+        try:
+            gdal.BuildVRT(vrt_file, batch_files)
+        except Exception as e:
+            print(f"Failed to create VRT for batch {i // batch_size}: {e}")
+            continue
 
-        # Compress the VRT file to the final batch output file
-        gdal.Translate(batch_output_file, vrt_file, options=gdal.TranslateOptions(options=compress_options))
+        # Translate the VRT to a compressed TIFF
+        try:
+            gdal.Translate(batch_output_file, vrt_file, options=gdal.TranslateOptions(options=compress_options))
+        except Exception as e:
+            print(f"Failed to create compressed TIFF for batch {i // batch_size}: {e}")
+            continue
 
-        # Check if batch output was created successfully
-        if not os.path.exists(batch_output_file):
-            raise RuntimeError(f"Failed to create batch file {batch_output_file}")
+        # Verify the output and clean up
+        if os.path.exists(batch_output_file):
+            temp_files.append(batch_output_file)
+            os.remove(vrt_file)
+            print(f"Processed batch {i // batch_size + 1}/{(len(input_files) + batch_size - 1) // batch_size}")
+        else:
+            print(f"Batch file {batch_output_file} was not created.")
 
-        # Clean up the temporary VRT file
-        os.remove(vrt_file)
-        temp_files.append(batch_output_file)
-        print(f"Processed batch {i // batch_size + 1}/{(total_files + batch_size - 1) // batch_size}")
-
-    # Ensure we have batch files before proceeding to merge
+    # Ensure batch files exist for final merging
     if not temp_files:
         raise RuntimeError("No batch files were created. Cannot proceed with the merge.")
 
-    # Merge all batch files into the final output file
-    vrt_file = os.path.join(input_dir, "final_merged.vrt")
-    gdal.BuildVRT(vrt_file, temp_files)
+    # Merge all batch files into a single output file
+    final_output_file = os.path.join(output_wms_path, f"{output_file_name}_{file_type}_merged.tif")
+    final_vrt_file = os.path.join(input_dir, "final_merged.vrt")
+    try:
+        gdal.BuildVRT(final_vrt_file, temp_files)
 
-    if not os.path.exists(vrt_file):
-        raise RuntimeError(f"Failed to create the VRT file: {vrt_file}")
+        # Ensure multi-band output
+        translate_options = gdal.TranslateOptions(
+            options=compress_options,
+            outputType=gdal.GDT_Byte,  # Adjust based on your data type
+            creationOptions=["NBITS=8"]  # Set bits per band if needed
+        )
+        gdal.Translate(final_output_file, final_vrt_file, options=translate_options)
+    except Exception as e:
+        raise RuntimeError(f"Failed to create the final merged file: {e}")
 
-    # Translate the VRT file to the final output file
-    final_output_file = os.path.join(output_wms_path, f"{output_file_name}_merged.tif")
-    gdal.Translate(final_output_file, vrt_file, options=gdal.TranslateOptions(options=compress_options))
-
-    # Clean up the temporary batch files and VRT file
+    # Clean up temporary files
     for temp_file in temp_files:
-        os.remove(temp_file)
-    os.remove(vrt_file)
+        try:
+            os.remove(temp_file)
+        except OSError as e:
+            print(f"Failed to remove temporary file {temp_file}: {e}")
+
+    try:
+        os.remove(final_vrt_file)
+    except OSError as e:
+        print(f"Failed to remove VRT file {final_vrt_file}: {e}")
 
     print(f"Merged and compressed TIFF file created at {final_output_file}")
 
