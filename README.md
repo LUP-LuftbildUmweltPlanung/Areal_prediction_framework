@@ -84,7 +84,7 @@ cd environment
 pip install -r requirements_sam2.txt
 ```
 
-#### Installation for RetinaNet
+#### Installation for deepforest
 To use the RetinaNet model for object detection, follow these steps:
 ```bash
 conda create -n Areal_predict_RetinaNet python=3.11
