@@ -111,11 +111,10 @@ elif model_usage == "deepforest":
         'merge': True,
         "folder_path": r"PATH",
         "savedir": r"PATH",
-        "small_tiles": True,
+        "small_tiles": True, # Whether to use tile-based prediction for large image 
         "patch_size": 400,
-        "patch_overlap": 0.25,
-        "iou_threshold": 0.2,
-        "thresh": 0.2
+        "patch_overlap": 0.15,  # Overlap percentage between adjacent tiles reduce it when large image
+        "thresh": 0.2 # Confidence score threshold for filtering predictions
     }
 
     def run_predict(args_predict):
@@ -123,8 +122,8 @@ elif model_usage == "deepforest":
         model = main.deepforest.load_from_checkpoint(model_path)  # Load the model
 
         # Force NMS threshold override
-        model.config["nms_thresh"] = args_predict["iou_threshold"]  # Overwrite config
-        model.nms_thresh = args_predict["iou_threshold"]  # Overwrite model attribute
+        model.config["nms_thresh"] = args_predict["thresh"]  # Overwrite config
+        model.nms_thresh = args_predict["thresh"]  # Overwrite model attribute
         print(f"Forced NMS threshold: {model.nms_thresh}")
 
         process_all_tif_files_in_folder(
@@ -132,10 +131,9 @@ elif model_usage == "deepforest":
             folder_path=args_predict["folder_path"],
             savedir=args_predict["savedir"],
             small_tiles=args_predict["small_tiles"],
-            patch_size=args_predict["patch_size"],
-            patch_overlap=args_predict["patch_overlap"],
-            iou_threshold=args_predict["iou_threshold"],
-            thresh=args_predict["thresh"]
+            patch_size=args_predict["patch_size"], 
+            patch_overlap=args_predict["patch_overlap"], 
+            thresh=args_predict["thresh"] 
         )
 
 
