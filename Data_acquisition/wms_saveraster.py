@@ -26,7 +26,7 @@ def write_meta_raster(x_min, y_min, x_max, y_max, bildflug_array, out_meta, epsg
 
     # nrows, ncols = bildflug_array.shape
     nrows, ncols = img_width, img_height
-    
+
     # Set the geotransform
     geotransform = (x_min, r_aufl, 0, y_max, 0, -r_aufl)  # new
 
@@ -132,6 +132,28 @@ def merge_raster_bands(rgb, ir, output_file_path):
     os.remove(rgb_path)
     os.remove(ir_path)
 
+#### new
+def apply_georeferencing(file_path, x_min, y_min, x_max, y_max, epsg_code):
+    """Force georeferencing on the downloaded TIFF file."""
+
+    ds = gdal.Open(file_path, gdal.GA_Update)
+    if ds is None:
+        print(f"Cannot open file for georeferencing: {file_path}")
+        return
+
+    # Apply projection (CRS)
+    srs = osr.SpatialReference()
+    srs.ImportFromEPSG(int(epsg_code.split(":")[1]))  # Extract EPSG code
+    ds.SetProjection(srs.ExportToWkt())
+
+    # Apply geotransform (spatial extent)
+    pixel_width = (x_max - x_min) / ds.RasterXSize
+    pixel_height = (y_max - y_min) / ds.RasterYSize
+    geotransform = (x_min, pixel_width, 0, y_max, 0, -pixel_height)
+    ds.SetGeoTransform(geotransform)
+
+    ds = None  # Save and close
+    print(f"✅ Georeferencing applied to {file_path}")
 
 def extract_raster_data(wms, epsg_code, x_min, y_min, x_max, y_max, output_file_path):
     """Get image data for a specified frame and write it into tif file"""
@@ -187,6 +209,8 @@ def extract_raster_data(wms, epsg_code, x_min, y_min, x_max, y_max, output_file_
             out.close()
         except:
             sub_log.error("Could not write data to file %s." % output_file_path)
+            # Force georeferencing on the saved TIFF
+    apply_georeferencing(output_file_path, x_min, y_min, x_max, y_max, epsg_code)
 
 
 def png_to_tiff(img, output_file_path, x_min, y_min, x_max, y_max):
@@ -246,12 +270,14 @@ def get_tile_bounds(file_path):
     ds = None
     return (min_x, min_y, max_x, max_y)
 
+
 def sort_files_by_spatial_proximity(input_files):
     """Sort files based on their spatial proximity."""
     tile_bounds = [(f, get_tile_bounds(f)) for f in input_files]
     # Sort by min_x and then by min_y to ensure proximity
     sorted_files = sorted(tile_bounds, key=lambda x: (x[1][0], x[1][1]))
     return [f[0] for f in sorted_files]
+
 
 def merge_files(input_dir, output_file_name, output_wms_path, batch_size, file_type=None):
     """
@@ -339,7 +365,7 @@ def merge_files(input_dir, output_file_name, output_wms_path, batch_size, file_t
         # Ensure multi-band output
         translate_options = gdal.TranslateOptions(
             options=compress_options,
-            outputType=gdal.GDT_Byte,  # Adjust based on your data type
+            outputType=gdal.GDT_Int32 if file_type == "meta" else gdal.GDT_Byte,  # ⬅️ Set Int32 for meta files
             creationOptions=["NBITS=8"]  # Set bits per band if needed
         )
         gdal.Translate(final_output_file, final_vrt_file, options=translate_options)
@@ -359,6 +385,7 @@ def merge_files(input_dir, output_file_name, output_wms_path, batch_size, file_t
         print(f"Failed to remove VRT file {final_vrt_file}: {e}")
 
     print(f"Merged and compressed TIFF file created at {final_output_file}")
+
 
 
 def extract_raster_data_process(output_wms_path, output_file_name, wms_var, epsg_code, epsg_code_int, x_min, y_min,
@@ -428,14 +455,14 @@ def polygon_processing(geom, output_wms_path, output_file_name, epsg_code, epsg_
 
     if wms_calc == True:
         try:
-            wms = WebMapService(wms_ad)
+            wms = WebMapService(wms_ad, version='1.3.0', timeout=120, parse_remote_metadata= True)
             list(wms.contents)
         except:
             sub_log.error("cannot connect to dop wms: %s" % wms_ad)
 
     if meta_calc == True:
         try:
-            wms_meta = WebMapService(wms_ad_meta)
+            wms_meta = WebMapService(wms_ad_meta, version='1.3.0', timeout=120, parse_remote_metadata= True)
             list(wms_meta.contents)
         except:
             sub_log.error("cannot connect to meta wms: %s" % wms_meta)
@@ -528,15 +555,16 @@ def polygon_processing(geom, output_wms_path, output_file_name, epsg_code, epsg_
             # if merge_wms == True:
             print(f"Creating directory at {output_wms_path}")
             try:
-                #merge_files(output_wms_path, output_wms_dop_path, output_file_name, "dop")
-                merge_files(output_wms_path, output_wms_dop_path, output_file_name, batch_size= batch_size, file_type="dop")
+                # merge_files(output_wms_path, output_wms_dop_path, output_file_name, "dop")
+                merge_files(output_wms_path, output_wms_dop_path, output_file_name, batch_size=batch_size,
+                            file_type="dop")
 
             except:
                 sub_log.error("Cannot merge dop files for %s" % output_file_name)
         if meta_calc == True:
             # if merge_wms == True:
             try:
-                #merge_files(output_wms_path, output_wms_meta_path, output_file_name, "meta")
+                # merge_files(output_wms_path, output_wms_meta_path, output_file_name, "meta")
                 merge_files(output_wms_path, output_wms_meta_path, output_file_name, batch_size=batch_size,
                             file_type="meta")
             except:
@@ -655,7 +683,7 @@ def main(input):
     layer2 = str(input['layer2'])
     wms_ad_meta = str(input['wms_ad_meta'])
     layer_meta = str(input['layer_meta'])
-    batch_size = int(input["batch_size"]) # new
+    batch_size = int(input["batch_size"])  # new
     meta_calc = input['meta_calc']
     img_width = input["img_width"]  # new
     img_height = input["img_height"]  # new
@@ -678,7 +706,6 @@ def main(input):
     else:
         img_format = "image/tiff"
         meta_info_format = "text/plain"
-
 
     # Check if dop and meta folders exist and contain .tif files
     dop_folder_path = os.path.join(output_wms_path, "dop")
@@ -733,14 +760,16 @@ def main(input):
         # Now merge the files after moving them
         print("Merging dop files...")
         try:
-            merge_files(dop_folder_path, "aoi_wze56r_strecke100r", output_wms_path,batch_size= batch_size, file_type="dop")
+            merge_files(dop_folder_path, "aoi_wze56r_strecke100r", output_wms_path, batch_size=batch_size,
+                        file_type="dop")
             print("Dop files merged successfully.")
         except Exception as e:
             print(f"Failed to merge dop files: {e}")
 
         print("Merging meta files...")
         try:
-            merge_files(meta_folder_path, "aoi_wze56r_strecke100r", output_wms_path,batch_size= batch_size, file_type="meta")
+            merge_files(meta_folder_path, "aoi_wze56r_strecke100r", output_wms_path, batch_size=batch_size,
+                        file_type="meta")
             print("Meta files merged successfully.")
         except Exception as e:
             print(f"Failed to merge meta files: {e}")
@@ -748,5 +777,4 @@ def main(input):
     endtime = time.time()
     sub_log.info("Execution time: %s seconds" % (endtime - starttime))
     print("Execution time: ", endtime - starttime, "seconds")
-
 
