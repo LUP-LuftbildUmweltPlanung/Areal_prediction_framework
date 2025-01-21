@@ -1,6 +1,6 @@
 # Areal Prediction Framework
 
-An automated framework for downloading raster data and acquisition dates from WMS servers or geoportals, followed by predicting masks over the WMS tiles using various models, including UNet and RetinaNet.
+An automated framework for downloading raster data and acquisition dates from WMS servers or geoportals, followed by predicting masks over the WMS tiles using various models, including UNet, SAM2 and RetinaNet.
 
 ## Description
 
