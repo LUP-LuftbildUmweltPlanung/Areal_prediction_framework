@@ -104,7 +104,6 @@ elif model_usage == "deepforest":
         'AOI': 'Leipzig', # to give the name of saved predicted file
         'year': '2024', # to give the year of saved predicted file
         'merge': True, # if you want to merge the predicted files or keep them as tiles
-        "folder_path": r"PATH", # the path to the shapefile which need to download the tiles and predict
         "savedir": r"PATH", # the path to save the predicted result
         "small_tiles": True, # if True, the prediction process will divide the whole image into small tiles then apply predict function.
         "patch_size": 400, # if ("small_tiles": True) then you have to define the size of the tiles "recommended: 400"
@@ -120,7 +119,7 @@ elif model_usage == "deepforest":
         print(f"Forced NMS threshold: {model.nms_thresh}")
         process_all_tif_files_in_folder(
             model=model,
-            folder_path=args_predict["folder_path"],
+            folder_path=args_predict["directory_path"],
             savedir=args_predict["savedir"],
             small_tiles=args_predict["small_tiles"],
             patch_size=args_predict["patch_size"], 
