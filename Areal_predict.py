@@ -32,15 +32,11 @@ if model_usage == "UNet":
         'r_aufl': None,  #  loading from JSON
         'meta_calc': True,
         'wms_calc': True,
-        # 'wms_ad': 'https://sg.geodatenzentrum.de/wms_dop__14152289-bb6b-bcbb-93d7-74602cfa13d6?request=GetCapabilities&service=WMS&',
-        # 'layer': 'rgb',
-        'wms_ad': 'https://geodienste.sachsen.de/wms_geosn_dop-rgb/guest?REQUEST=GetCapabilities&SERVICE=WMS&',
-        'layer': 'sn_dop_020',
+        'wms_ad': '',
+        'layer': '',
         'layer2': 'None',
-        # 'wms_ad_meta': 'http://sg.geodatenzentrum.de/wms_info?',
-        # 'layer_meta': 'dop',
-        'wms_ad_meta': 'https://geodienste.sachsen.de/wms_geosn_dop-rgb/guest?REQUEST=GetCapabilities&SERVICE=WMS&',
-        'layer_meta': 'sn_dop_020_info',
+        'wms_ad_meta': '',
+        'layer_meta': '',
         'state': False,
         'img_width': None,  # loading from JSON
         'img_height': None, # loading from JSON
@@ -68,11 +64,11 @@ elif model_usage == "sam2":
         'r_aufl': 0.5, 
         'meta_calc': True,
         'wms_calc': True,
-        'wms_ad': 'https://sg.geodatenzentrum.de/wms_dop__14152289-bb6b-bcbb-93d7-74602cfa13d6?request=GetCapabilities&service=WMS&',
-        'layer': 'rgb',
+        'wms_ad': '',
+        'layer': '',
         'layer2': 'None',
-        'wms_ad_meta': 'http://sg.geodatenzentrum.de/wms_info?',
-        'layer_meta': 'dop',
+        'wms_ad_meta': '',
+        'layer_meta': '',
         'state': False,
         'img_width': 400,  
         'img_height': 400, 
@@ -92,11 +88,11 @@ elif model_usage == "deepforest":
         'r_aufl': 0.2, # define the required resolution to download 
         'meta_calc': True, # if you want to save also meta data 
         'wms_calc': True, # if you want to save dop images
-        'wms_ad': 'https://isk.geobasis-bb.de/mapproxy/dop20_2019_2021/service/wms?request=GetCapabilities&service=WMS', # WMS for whole Germany
-        'layer': 'dop20_bebb_2019_2021_farbe', # the name of layer
+        'wms_ad': '',
+        'layer': '', # the name of layer
         'layer2': 'None', # if there is another layer
-        'wms_ad_meta': 'https://isk.geobasis-bb.de/ows/aktualitaeten_wms?', # Meta data
-        'layer_meta': 'bb_dop-19-21_info', # layer name
+        'wms_ad_meta': '', # Meta data
+        'layer_meta': '', # layer name
         'state': False, # just for Brandenburg
         'img_width': 400, 
         'img_height': 400,
